@@ -1,8 +1,20 @@
-function VideoCard({ video, onVideoSelect }) {
+function VideoCard({ video }) {
+    const videoUrl = `https://www.youtube.com/watch?v=${video.id.videoId}`;
+    const publishedDate = new Date(video.snippet.publishedAt).toLocaleDateString('it-IT', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
     return (
-        <div className="video-card" onClick={() => onVideoSelect(video)}>
-            <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} loading="lazy" />
-            <h3>{video.snippet.title}</h3>
-        </div>
+        <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="video-card-link">
+            <div className="video-card">
+                <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} loading="lazy" />
+                <div className="video-card-content">
+                    <h3>{video.snippet.title}</h3>
+                    <p className="video-date">{publishedDate}</p>
+                </div>
+            </div>
+        </a>
     );
 }

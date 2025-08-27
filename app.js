@@ -1,6 +1,5 @@
 function App() {
     const [videos, setVideos] = React.useState([]);
-    const [selectedVideo, setSelectedVideo] = React.useState(null);
 
     const API_KEY = 'YOUR_API_KEY'; // IMPORTANT: Replace with your YouTube Data API key
     const CHANNEL_ID = 'UCZjrNGpSA9XyfAwjAPTFFmQ';
@@ -25,8 +24,7 @@ function App() {
                 <img src={LOGO_URL} alt="Food Lovers Logo" className="logo" />
                 <h1>Food Lovers</h1>
             </div>
-            <VideoGrid videos={videos} onVideoSelect={setSelectedVideo} />
-            <Modal video={selectedVideo} onClose={() => setSelectedVideo(null)} />
+            <VideoGrid videos={videos} />
         </div>
     );
 }

@@ -49,14 +49,20 @@ h1 {
     gap: 25px;
 }
 
+.video-card-link {
+    text-decoration: none;
+}
+
 .video-card {
     background-color: var(--card-background);
     border: 1px solid var(--card-border-color);
     border-radius: 12px;
     overflow: hidden;
-    cursor: pointer;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     box-shadow: 0 2px 5px var(--shadow-color);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .video-card:hover {
@@ -71,84 +77,29 @@ h1 {
     aspect-ratio: 16 / 9;
 }
 
-.video-card h3 {
+.video-card-content {
     padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-card h3 {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
     color: var(--font-color);
+    flex-grow: 1;
 }
 
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.modal-content {
-    background: var(--card-background);
-    border-radius: 12px;
-    position: relative;
-    width: 90%;
-    max-width: 800px;
-    padding: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-content iframe {
-    width: 100%;
-    height: 450px;
-    border: none;
-    border-radius: 8px;
-}
-
-.close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #ff5f57;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background-color 0.2s;
-}
-
-.close-button:hover {
-    background-color: #e0443e;
+.video-date {
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+    margin-top: 8px;
 }
 
 @media (max-width: 600px) {
     h1 {
         font-size: 2rem;
-    }
-    .modal-content iframe {
-        height: 250px;
     }
 }
