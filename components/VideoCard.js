@@ -1,8 +1,8 @@
 function VideoCard({ video }) {
     const videoUrl = `https://www.youtube.com/watch?v=${video.id.videoId}`;
-    const publishedDate = new Date(video.snippet.publishedAt).toLocaleDateString('it-IT', {
+    const publishedDate = new Date(video.snippet.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
-        month: 'long',
+        month: 'short',
         day: 'numeric'
     });
 

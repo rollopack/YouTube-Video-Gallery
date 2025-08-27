@@ -105,6 +105,47 @@ h1 {
     color: var(--secondary-color);
 }
 
+.loading-indicator {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+}
+
+.placeholder .placeholder-thumbnail {
+    height: 157.5px;
+    background-color: #e0e0e0;
+    animation: shimmer 1.5s infinite linear;
+}
+
+.placeholder .placeholder-title {
+    height: 1rem;
+    width: 80%;
+    background-color: #e0e0e0;
+    margin-bottom: 8px;
+    animation: shimmer 1.5s infinite linear;
+}
+
+.placeholder .placeholder-date {
+    height: 0.8rem;
+    width: 50%;
+    background-color: #e0e0e0;
+    animation: shimmer 1.5s infinite linear;
+}
+
+
+@keyframes shimmer {
+    0% {
+        background-color: #e0e0e0;
+    }
+    50% {
+        background-color: #f0f0f0;
+    }
+    100% {
+        background-color: #e0e0e0;
+    }
+}
+
 @media (max-width: 600px) {
     h1 {
         font-size: 2rem;
