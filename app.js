@@ -1,24 +1,31 @@
-// --- Versione Modificata per l'Idratazione ---
+// --- Versione Modificata per Configurazione Centralizzata e Dati Dinamici ---
 function App() {
-    // Inizializza lo stato con i dati passati da PHP, se disponibili.
+    // Carica la configurazione statica e i dati dinamici iniziali da PHP
+    const config = window.__CONFIG__ || {};
     const initialData = window.__INITIAL_DATA__ || {};
+
     const [videos, setVideos] = React.useState(initialData.videos || []);
     const [nextPageToken, setNextPageToken] = React.useState(initialData.nextPageToken || '');
+    const [logoUrl, setLogoUrl] = React.useState(initialData.logoUrl || '');
+    const [pageTitle, setPageTitle] = React.useState(initialData.pageTitle || 'Video Gallery');
 
     const [loading, setLoading] = React.useState(false);
-    // L'initialLoading non è più necessario perché i dati sono già presenti.
     const [initialLoading, setInitialLoading] = React.useState(!initialData.videos);
 
-    // Le costanti sono ancora necessarie per le chiamate API successive (scroll infinito).
-    const API_KEY = 'AIzaSyAum9UGshqFyeN__u3SeN_Wnia1EKl6qOY';
-    const CHANNEL_ID = 'UCZjrNGpSA9XyfAwjAPTFFmQ';
-    const LOGO_URL = 'https://yt3.googleusercontent.com/JlAO7XAr-xQBvP0KCnHcvubDfRdH6ZXXul5o79uOloRG8AC9wq_SLtaeH-Du14MEpCV82fjvjg=s160-c-k-c0x00ffffff-no-rj';
+    // Aggiorna il titolo del documento quando lo stato cambia
+    React.useEffect(() => {
+        document.title = pageTitle;
+    }, [pageTitle]);
 
     const fetchVideos = (pageToken = '') => {
         if (loading) return;
         setLoading(true);
 
-        fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=12&pageToken=${pageToken}`)
+        // Usa la configurazione iniettata da PHP per le chiamate API
+        const apiKey = config.apiKey;
+        const channelId = config.channelId;
+
+        fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=12&pageToken=${pageToken}`)
             .then(response => response.json())
             .then(data => {
                 if (data.items) {
@@ -41,10 +48,10 @@ function App() {
 
     // Esegui il fetch iniziale solo se i dati non sono stati forniti da PHP.
     React.useEffect(() => {
-        if (videos.length === 0) {
+        if (videos.length === 0 && config.apiKey) { // Assicurati che la config sia caricata
             fetchVideos();
         }
-    }, []);
+    }, [config]); // Dipende dalla config
 
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop < document.documentElement.offsetHeight - 100 || !nextPageToken || loading) {
@@ -62,8 +69,8 @@ function App() {
     return (
         <div>
             <div className="header">
-                <img src={LOGO_URL} alt="Food Lovers Logo" className="logo" />
-                <h1>Food Lovers</h1>
+                <img src={logoUrl} alt={`${pageTitle} Logo`} className="logo" />
+                <h1>{pageTitle}</h1>
             </div>
             <VideoGrid videos={videos} initialLoading={initialLoading} />
             {loading && !initialLoading && <p className="loading-indicator">Loading more videos...</p>}
