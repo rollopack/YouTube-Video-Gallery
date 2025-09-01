@@ -1,12 +1,11 @@
 <?php
 // --- Inizio Blocco PHP per il Rendering Lato Server ---
 
-// Dati recuperati da app.js
-const API_KEY = 'AIzaSyAum9UGshqFyeN__u3SeN_Wnia1EKl6qOY';
-const CHANNEL_ID = 'UCZjrNGpSA9XyfAwjAPTFFmQ';
-const LOGO_URL = 'https://yt3.googleusercontent.com/JlAO7XAr-xQBvP0KCnHcvubDfRdH6ZXXul5o79uOloRG8AC9wq_SLtaeH-Du14MEpCV82fjvjg=s160-c-k-c0x00ffffff-no-rj';
+require_once 'config.php';
+
 $videos = [];
 $nextPageToken = '';
+$logoUrl = FALLBACK_LOGO_URL; // Inizializza con il logo di fallback
 
 // Funzione per chiamare l'API di YouTube
 function fetch_initial_videos() {
@@ -36,10 +35,40 @@ function fetch_initial_videos() {
     return ['videos' => [], 'nextPageToken' => ''];
 }
 
-// Recupera i dati iniziali
+// Funzione per recuperare dinamicamente il logo del canale
+function fetch_channel_logo($channelId) {
+    $channelUrl = 'https://www.youtube.com/channel/' . $channelId;
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $channelUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3');
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Segui i reindirizzamenti
+    $html = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($http_code == 200 && $html) {
+        // Cerca il meta tag og:image per trovare l'URL del logo
+        if (preg_match('/<meta property="og:image" content="([^"]+)">/', $html, $matches)) {
+            if (isset($matches[1])) {
+                return $matches[1];
+            }
+        }
+    }
+
+    return false;
+}
+
+// Recupera i dati iniziali e il logo
 $initial_data = fetch_initial_videos();
 $videos = $initial_data['videos'];
 $nextPageToken = $initial_data['nextPageToken'];
+
+$dynamicLogo = fetch_channel_logo(CHANNEL_ID);
+if ($dynamicLogo) {
+    $logoUrl = $dynamicLogo;
+}
 
 // --- Fine Blocco PHP ---
 ?>
@@ -56,7 +85,7 @@ $nextPageToken = $initial_data['nextPageToken'];
         <?php // --- Inizio Rendering HTML Dinamico --- ?>
         <div>
             <div class="header">
-                <img src="<?php echo LOGO_URL; ?>" alt="Food Lovers Logo" class="logo" />
+                <img src="<?php echo htmlspecialchars($logoUrl); ?>" alt="Food Lovers Logo" class="logo" />
                 <h1>Food Lovers</h1>
             </div>
             <?php if (!empty($videos)): ?>
