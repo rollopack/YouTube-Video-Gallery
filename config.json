@@ -2,5 +2,7 @@
   "apiKey": "AIzaSyAum9UGshqFyeN__u3SeN_Wnia1EKl6qOY",
   "channelId": "UCZjrNGpSA9XyfAwjAPTFFmQ",
   "fallbackLogoUrl": "https://yt3.googleusercontent.com/JlAO7XAr-xQBvP0KCnHcvubDfRdH6ZXXul5o79uOloRG8AC9wq_SLtaeH-Du14MEpCV82fjvjg=s160-c-k-c0x00ffffff-no-rj",
-  "fallbackTitle": "Food Lovers"
+  "fallbackTitle": "Food Lovers",
+  "openInLightbox": false,
+  "cacheDurationHours": 6
 }

@@ -8,9 +8,10 @@ function App() {
     const [nextPageToken, setNextPageToken] = React.useState(initialData.nextPageToken || '');
     const [logoUrl, setLogoUrl] = React.useState(initialData.logoUrl || '');
     const [pageTitle, setPageTitle] = React.useState(initialData.pageTitle || 'Video Gallery');
+    const [lightboxVideo, setLightboxVideo] = React.useState(null);
 
     const [loading, setLoading] = React.useState(false);
-    const [initialLoading, setInitialLoading] = React.useState(!initialData.videos);
+    const [initialLoading, setInitialLoading] = React.useState((initialData.videos || []).length === 0);
 
     // Aggiorna il titolo del documento quando lo stato cambia
     React.useEffect(() => {
@@ -21,7 +22,6 @@ function App() {
         if (loading) return;
         setLoading(true);
 
-        // Usa la configurazione iniettata da PHP per le chiamate API
         const apiKey = config.apiKey;
         const channelId = config.channelId;
 
@@ -46,12 +46,11 @@ function App() {
             });
     };
 
-    // Esegui il fetch iniziale solo se i dati non sono stati forniti da PHP.
     React.useEffect(() => {
-        if (videos.length === 0 && config.apiKey) { // Assicurati che la config sia caricata
+        if (videos.length === 0 && config.apiKey) {
             fetchVideos();
         }
-    }, [config]); // Dipende dalla config
+    }, [config]);
 
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop < document.documentElement.offsetHeight - 100 || !nextPageToken || loading) {
@@ -65,15 +64,30 @@ function App() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [nextPageToken, loading]);
 
-    // La struttura JSX deve corrispondere a quella generata da PHP per un'idratazione corretta.
+    const handleVideoSelect = (video) => {
+        if (config.openInLightbox) {
+            setLightboxVideo(video);
+        }
+    };
+
+    const closeLightbox = () => {
+        setLightboxVideo(null);
+    };
+
     return (
         <div>
             <div className="header">
                 <img src={logoUrl} alt={`${pageTitle} Logo`} className="logo" />
                 <h1>{pageTitle}</h1>
             </div>
-            <VideoGrid videos={videos} initialLoading={initialLoading} />
+            <VideoGrid
+                videos={videos}
+                initialLoading={initialLoading}
+                onVideoSelect={handleVideoSelect}
+                openInLightbox={config.openInLightbox}
+            />
             {loading && !initialLoading && <p className="loading-indicator">Loading more videos...</p>}
+            <Lightbox video={lightboxVideo} onClose={closeLightbox} />
         </div>
     );
 }
