@@ -6,33 +6,29 @@ function VideoCard({ video, onSelect, openInLightbox }) {
         day: 'numeric'
     });
 
-    const handleClick = () => {
-        if (openInLightbox) {
-            onSelect(video);
-        }
+    // Determina il componente wrapper e le sue props in base alla configurazione
+    const Wrapper = openInLightbox ? 'div' : 'a';
+    const wrapperProps = {
+        className: 'video-card-link'
     };
 
-    const cardContent = (
-        <div className={`video-card ${openInLightbox ? 'clickable' : ''}`}>
-            <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} loading="lazy" />
-            <div className="video-card-content">
-                <h3>{video.snippet.title}</h3>
-                <p className="video-date">{publishedDate}</p>
-            </div>
-        </div>
-    );
-
     if (openInLightbox) {
-        return (
-            <div onClick={handleClick} className="video-card-link">
-                {cardContent}
-            </div>
-        );
+        wrapperProps.onClick = () => onSelect(video);
+    } else {
+        wrapperProps.href = videoUrl;
+        wrapperProps.target = '_blank';
+        wrapperProps.rel = 'noopener noreferrer';
     }
 
     return (
-        <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="video-card-link">
-            {cardContent}
-        </a>
+        <Wrapper {...wrapperProps}>
+            <div className={`video-card ${openInLightbox ? 'clickable' : ''}`}>
+                <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} loading="lazy" />
+                <div className="video-card-content">
+                    <h3>{video.snippet.title}</h3>
+                    <p className="video-date">{publishedDate}</p>
+                </div>
+            </div>
+        </Wrapper>
     );
 }

@@ -37,8 +37,15 @@ function fetch_initial_videos() {
 
     if ($http_code == 200) {
         $data = json_decode($output, true);
+        $videos = [];
+        if (!empty($data['items'])) {
+            // Filtra solo i risultati che sono video, escludendo canali, playlist, etc.
+            $videos = array_filter($data['items'], function($item) {
+                return isset($item['id']['kind']) && $item['id']['kind'] === 'youtube#video';
+            });
+        }
         return [
-            'videos' => $data['items'] ?? [],
+            'videos' => array_values($videos), // Rindica l'array per evitare buchi nelle chiavi
             'nextPageToken' => $data['nextPageToken'] ?? ''
         ];
     }
@@ -76,12 +83,14 @@ function fetch_channel_metadata($channelId) {
 
 // Logica di Caching
 $cacheDir = dirname(CACHE_FILE_PATH);
+// Prova a creare la directory della cache, sopprimendo gli errori se fallisce.
 if (!is_dir($cacheDir)) {
-    mkdir($cacheDir, 0755, true);
+    @mkdir($cacheDir, 0755, true);
 }
 
+// Controlla se la cache esiste ed è valida.
 if (file_exists(CACHE_FILE_PATH) && (time() - filemtime(CACHE_FILE_PATH) < $cacheDurationInSeconds)) {
-    // Cache Hit: Carica i dati dalla cache
+    // Cache Hit: Carica i dati dalla cache.
     $cachedDataJson = file_get_contents(CACHE_FILE_PATH);
     $cachedData = json_decode($cachedDataJson, true);
 
@@ -90,7 +99,7 @@ if (file_exists(CACHE_FILE_PATH) && (time() - filemtime(CACHE_FILE_PATH) < $cach
     $pageTitle = $cachedData['pageTitle'];
     $logoUrl = $cachedData['logoUrl'];
 } else {
-    // Cache Miss: Recupera i dati freschi
+    // Cache Miss: Recupera i dati freschi.
     $initial_data = fetch_initial_videos();
     $videos = $initial_data['videos'];
     $nextPageToken = $initial_data['nextPageToken'];
@@ -103,14 +112,16 @@ if (file_exists(CACHE_FILE_PATH) && (time() - filemtime(CACHE_FILE_PATH) < $cach
         $logoUrl = $channel_metadata['logoUrl'];
     }
 
-    // Salva i dati freschi nella cache
-    $dataToCache = [
-        'videos' => $videos,
-        'nextPageToken' => $nextPageToken,
-        'pageTitle' => $pageTitle,
-        'logoUrl' => $logoUrl
-    ];
-    file_put_contents(CACHE_FILE_PATH, json_encode($dataToCache), LOCK_EX);
+    // Salva i dati freschi nella cache, solo se la directory è scrivibile.
+    if (is_dir($cacheDir) && is_writable($cacheDir)) {
+        $dataToCache = [
+            'videos' => $videos,
+            'nextPageToken' => $nextPageToken,
+            'pageTitle' => $pageTitle,
+            'logoUrl' => $logoUrl
+        ];
+        file_put_contents(CACHE_FILE_PATH, json_encode($dataToCache), LOCK_EX);
+    }
 }
 
 // --- Fine Blocco PHP ---
