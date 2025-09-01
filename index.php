@@ -152,6 +152,7 @@ if (file_exists(CACHE_FILE_PATH) && (time() - filemtime(CACHE_FILE_PATH) < $cach
                             $publishedDate = date_format(date_create($video['snippet']['publishedAt']), 'M j, Y');
                         ?>
                         <?php if ($config->openInLightbox ?? false): ?>
+                            <!-- RENDER LATO SERVER: MODALITÀ LIGHTBOX -->
                             <div class="video-card-link">
                                 <div class="video-card clickable">
                                     <img src="<?php echo htmlspecialchars($video['snippet']['thumbnails']['medium']['url']); ?>" alt="<?php echo htmlspecialchars($video['snippet']['title']); ?>" loading="lazy" />
@@ -162,6 +163,7 @@ if (file_exists(CACHE_FILE_PATH) && (time() - filemtime(CACHE_FILE_PATH) < $cach
                                 </div>
                             </div>
                         <?php else: ?>
+                            <!-- RENDER LATO SERVER: MODALITÀ NUOVA SCHEDA -->
                             <a href="<?php echo htmlspecialchars($videoUrl); ?>" target="_blank" rel="noopener noreferrer" class="video-card-link">
                                 <div class="video-card">
                                     <img src="<?php echo htmlspecialchars($video['snippet']['thumbnails']['medium']['url']); ?>" alt="<?php echo htmlspecialchars($video['snippet']['title']); ?>" loading="lazy" />
