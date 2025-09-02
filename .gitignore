@@ -1,3 +1,4 @@
 cache/
 .history/
 config.json
+php_server.log
