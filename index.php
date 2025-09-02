@@ -184,7 +184,7 @@ if (file_exists(CACHE_FILE_PATH) && (time() - filemtime(CACHE_FILE_PATH) < $cach
     </div>
 
     <script>
-        window.__CONFIG__ = <?php echo json_encode(['apiKey' => $apiKey, 'channelId' => $channelId, 'openInLightbox' => $config->openInLightbox ?? false]); ?>;
+        window.__CONFIG__ = <?php echo json_encode(['openInLightbox' => $config->openInLightbox ?? false]); ?>;
         window.__INITIAL_DATA__ = <?php echo json_encode(['videos' => $videos, 'nextPageToken' => $nextPageToken, 'pageTitle' => $pageTitle, 'logoUrl' => $logoUrl]); ?>;
     </script>
 

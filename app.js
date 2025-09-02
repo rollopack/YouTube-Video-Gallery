@@ -22,14 +22,13 @@ function App() {
         if (loading) return;
         setLoading(true);
 
-        const apiKey = config.apiKey;
-        const channelId = config.channelId;
-
-        fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=12&pageToken=${pageToken}`)
+        fetch(`api.php?pageToken=${pageToken}`)
             .then(response => response.json())
             .then(data => {
                 if (data.items) {
-                    setVideos(prevVideos => [...prevVideos, ...data.items]);
+                    // Filtra eventuali risultati null o undefined per sicurezza
+                    const validItems = data.items.filter(item => item);
+                    setVideos(prevVideos => [...prevVideos, ...validItems]);
                     setNextPageToken(data.nextPageToken);
                 }
                 setLoading(false);
